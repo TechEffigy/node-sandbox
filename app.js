@@ -9,7 +9,6 @@ const helmet = require('helmet');
 const config = require('./config');
 const disco = require('./helpers/disco');
 
-mongoose.Promise = global.Promise;
 mongoose.connect(config.dbHost);
 const app = express();
 
@@ -24,6 +23,7 @@ require('./passport-middleware')(app);
 
 // Routes
 app.use('/users', require('./routes/users'));
+app.use('/items', require('./routes/items'));
 
 // 404 handler
 app.use((req, res, next) => {
@@ -34,10 +34,17 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res, next) => {
-  const error = app.get('env') === 'development' ? err : {};
+  // const error = app.get('env') === 'development' ? err : {};
   const status = err.status || 500;
+  const error = {};
 
+  if (err.error && err.error.isJoi) {
+    error.message = err.error.details.map(det => det.message);
+  } else {
+    error.message = err.message;
+  }
   res.status(status).json({ error });
+  next(err);
 });
 
 // Start Server
