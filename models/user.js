@@ -15,14 +15,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  items: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'item',
-    },
-  ],
 });
 
+/*
+    preSave Hook for storing hashed passwords
+*/
 userSchema.pre('save', async function saveHook(next) {
   try {
     const salt = await cbToPromise(bcrypt.genSalt)(10);
@@ -34,6 +31,9 @@ userSchema.pre('save', async function saveHook(next) {
   }
 });
 
+/*
+    presave hook for deleting a user, deletes all items associated with the user.
+*/
 userSchema.pre('remove', async function delHook(next) {
   try {
     await Item.remove({ user_id: this._id }).exec();

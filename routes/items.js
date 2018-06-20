@@ -6,6 +6,7 @@ const validator = require('express-joi-validation')({ passError: true });
 const { mwPromise } = require('../helpers/promisify');
 const ItemsController = require('../controllers/items');
 
+// Item Body Validation Scheme
 const ItemCheck = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
@@ -14,6 +15,9 @@ const ItemCheck = Joi.object({
 const router = express.Router();
 router.use(passport.authenticate('jwt', { session: false, failWithError: true }));
 
+/*
+    Create & Retrieve Items
+*/
 router
   .route('/')
   .get(mwPromise(ItemsController.getAll))

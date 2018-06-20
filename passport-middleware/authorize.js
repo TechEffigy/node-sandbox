@@ -9,6 +9,10 @@ const cookieExtractor = (req) => {
   return null;
 };
 
+/*
+    JWT Authorization for protected Routes
+*/
+
 module.exports = new JwtStrategy(
   {
     jwtFromRequest: cookieExtractor,

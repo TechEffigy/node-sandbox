@@ -3,6 +3,10 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
 const { cbToPromise } = require('../helpers/promisify');
 
+/*
+    Authentication for passport for signing-in
+*/
+
 module.exports = new LocalStrategy(
   {
     usernameField: 'email',

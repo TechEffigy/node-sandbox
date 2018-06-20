@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 
+const userRoutes = require('./routes/users');
+const itemRoutes = require('./routes/items');
 const config = require('./config');
 const disco = require('./helpers/disco');
 
@@ -22,8 +24,8 @@ app.use(cookieParser(config.jwtSecret));
 require('./passport-middleware')(app);
 
 // Routes
-app.use('/users', require('./routes/users'));
-app.use('/items', require('./routes/items'));
+app.use('/users', userRoutes);
+app.use('/items', itemRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

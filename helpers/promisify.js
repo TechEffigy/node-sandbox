@@ -1,3 +1,7 @@
+/*
+    Callback To Promise Wrapper
+    Reduces boilerplate
+*/
 function cbToPromise(func) {
   return (...args) =>
     new Promise((resolve, reject) => {
@@ -6,6 +10,11 @@ function cbToPromise(func) {
     });
 }
 
+/*
+    Express Route to Promise wrapper
+    Reduces Try/Catches boilerplate in controllers
+
+*/
 function mwPromise(fn) {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);

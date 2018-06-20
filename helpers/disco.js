@@ -1,10 +1,13 @@
 const chalk = require('chalk');
+/*
+    Colorful Console Logs Helper
+    Use like So disco.status('server running')
+*/
 
 module.exports = {
   status: (msg) => {
     console.log(chalk.whiteBright.bgBlue(msg));
   },
-
   error: (msg) => {
     console.log(chalk.whiteBright.bgRed(msg));
   },

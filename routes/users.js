@@ -8,6 +8,7 @@ const UsersController = require('../controllers/users');
 
 const router = express.Router();
 
+// Joi Validation Scheme
 const authCheck = Joi.object({
   email: Joi.string()
     .email()
@@ -18,7 +19,14 @@ const authCheck = Joi.object({
     .required(),
 });
 
+/*
+    Adds a new User
+*/
 router.route('/signup').post(validator.body(authCheck), mwPromise(UsersController.signup));
+
+/*
+    Sign the user in
+*/
 router
   .route('/signin')
   .post(
@@ -27,6 +35,9 @@ router
     mwPromise(UsersController.signin),
   );
 
+/*
+    Deletes Account & Items the User owns
+*/
 router
   .route('/deactivate')
   .delete(
@@ -34,6 +45,9 @@ router
     mwPromise(UsersController.deactivate),
   );
 
+/*
+    Retrieves User Information & all items of that user
+*/
 router
   .route('/me')
   .get(
