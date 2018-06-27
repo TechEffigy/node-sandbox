@@ -6,8 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const userRoutes = require('./routes/users');
-const itemRoutes = require('./routes/items');
+const routes = require('./routes');
 const config = require('./config');
 const disco = require('./helpers/disco');
 
@@ -24,8 +23,7 @@ app.use(cookieParser(config.jwtSecret));
 require('./passport-middleware')(app);
 
 // Routes
-app.use('/users', userRoutes);
-app.use('/items', itemRoutes);
+app.use('/api', routes);
 
 // 404 handler
 app.use((req, res, next) => {
@@ -51,5 +49,6 @@ app.use((err, req, res, next) => {
 
 // Start Server
 const port = process.env.PORT || 8081;
-app.listen(port);
-disco.status(`Server(${app.get('env')}) is listening at ${port}`);
+app.listen(port, () => {
+  disco.status(`Server(${app.get('env')}) is listening at ${port}`);
+});

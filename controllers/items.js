@@ -1,17 +1,28 @@
 const Item = require('../models/item');
 
-module.exports = {
-  getAll: async (req, res) => {
-    const Items = await Item.find({ user_id: req.user._id });
-    res.status(200).send(Items);
-  },
+async function getAll(req, res, next) {
+  try {
+    const items = await Item.find({ user_id: req.user._id });
+    res.send(items);
+  } catch (error) {
+    next(error);
+  }
+}
 
-  create: async (req, res) => {
+async function create(req, res, next) {
+  try {
     const { name, description } = req.body;
 
     const newItem = new Item({ user_id: req.user._id, name, description });
     await newItem.save();
 
-    res.status(200).json({ message: 'Successful' });
-  },
+    res.json({ message: 'Successful' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  getAll,
+  create,
 };

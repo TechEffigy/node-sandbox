@@ -1,16 +1,8 @@
 const express = require('express');
 const passport = require('passport');
-const Joi = require('joi');
-const validator = require('express-joi-validation')({ passError: true });
-
-const { mwPromise } = require('../helpers/promisify');
-const ItemsController = require('../controllers/items');
-
-// Item Body Validation Scheme
-const ItemCheck = Joi.object({
-  name: Joi.string().required(),
-  description: Joi.string().required(),
-});
+const validate = require('express-validation');
+const { ItemCheck } = require('../validations/item.validation');
+const { create, getAll } = require('../controllers/items');
 
 const router = express.Router();
 router.use(passport.authenticate('jwt', { session: false, failWithError: true }));
@@ -20,7 +12,7 @@ router.use(passport.authenticate('jwt', { session: false, failWithError: true })
 */
 router
   .route('/')
-  .get(mwPromise(ItemsController.getAll))
-  .post(validator.body(ItemCheck), mwPromise(ItemsController.create));
+  .get(getAll)
+  .post(validate(ItemCheck), create);
 
 module.exports = router;

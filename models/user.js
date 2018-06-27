@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcryptjs');
 const Item = require('./item');
-
-const { cbToPromise } = require('../helpers/promisify');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -22,8 +20,8 @@ const userSchema = new mongoose.Schema({
 */
 userSchema.pre('save', async function saveHook(next) {
   try {
-    const salt = await cbToPromise(bcrypt.genSalt)(10);
-    const passHash = await cbToPromise(bcrypt.hash)(this.password, salt, null);
+    const salt = await bcrypt.genSalt(10);
+    const passHash = await bcrypt.hash(this.password, salt);
     this.password = passHash;
     next();
   } catch (err) {

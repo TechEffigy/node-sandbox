@@ -1,57 +1,32 @@
 const express = require('express');
-const passport = require('passport');
-const Joi = require('joi');
-const validator = require('express-joi-validation')({ passError: true });
+const validate = require('express-validation');
 
-const { mwPromise } = require('../helpers/promisify');
-const UsersController = require('../controllers/users');
+const { authCheck } = require('../validations/auth.validation');
+const {
+  signup, signin, deactivate, me,
+} = require('../controllers/users');
+const { authorize } = require('../passport-middleware/authenticate');
 
 const router = express.Router();
-
-// Joi Validation Scheme
-const authCheck = Joi.object({
-  email: Joi.string()
-    .email()
-    .required(),
-  password: Joi.string()
-    .min(5)
-    .max(50)
-    .required(),
-});
 
 /*
     Adds a new User
 */
-router.route('/signup').post(validator.body(authCheck), mwPromise(UsersController.signup));
+router.route('/signup').post(validate(authCheck), signup);
 
 /*
     Sign the user in
 */
-router
-  .route('/signin')
-  .post(
-    validator.body(authCheck),
-    passport.authenticate('local', { session: false, failWithError: true }),
-    mwPromise(UsersController.signin),
-  );
+router.route('/signin').post(validate(authCheck), authorize(), signin);
 
 /*
     Deletes Account & Items the User owns
 */
-router
-  .route('/deactivate')
-  .delete(
-    passport.authenticate('jwt', { session: false, failWithError: true }),
-    mwPromise(UsersController.deactivate),
-  );
+router.route('/deactivate').delete(authorize(), deactivate);
 
 /*
     Retrieves User Information & all items of that user
 */
-router
-  .route('/me')
-  .get(
-    passport.authenticate('jwt', { session: false, failWithError: true }),
-    mwPromise(UsersController.me),
-  );
+router.route('/me').get(authorize(), me);
+
 module.exports = router;

@@ -1,13 +1,13 @@
+const passport = require('passport');
 const User = require('../models/user');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt-nodejs');
-const { cbToPromise } = require('../helpers/promisify');
+const bcrypt = require('bcryptjs');
 
 /*
     Authentication for passport for signing-in
 */
 
-module.exports = new LocalStrategy(
+const localStrategy = new LocalStrategy(
   {
     usernameField: 'email',
     passwordField: 'password',
@@ -19,7 +19,7 @@ module.exports = new LocalStrategy(
         return done(null, false);
       }
 
-      const isMatch = await cbToPromise(bcrypt.compare)(password, foundUser.password);
+      const isMatch = await bcrypt.compare(password, foundUser.password);
       if (isMatch) {
         return done(null, foundUser);
       }
@@ -30,3 +30,12 @@ module.exports = new LocalStrategy(
     }
   },
 );
+
+const authorize = () => {
+  passport.authenticate('jwt', { session: false, failWithError: true });
+};
+
+module.exports = {
+  localStrategy,
+  authorize,
+};
